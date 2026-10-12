@@ -20,7 +20,7 @@ function Readings() {
     try {
       let activeMeter = null
       if (user && user.id) {
-        const meterRes = await fetch(`http://localhost:8080/api/meters/user/${user.id}`)
+        const meterRes = await fetch(`https://smartbill-backend-b4wb.onrender.com/api/meters/user/${user.id}`)
         if (meterRes.ok) {
           const meters = await meterRes.json()
           if (Array.isArray(meters) && meters.length > 0) {
