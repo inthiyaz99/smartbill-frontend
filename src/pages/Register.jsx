@@ -1,60 +1,63 @@
-import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+
+const API_URL = (
+  import.meta.env.VITE_API_URL ||
+  "https://smartbill-backend-b4wb.onrender.com"
+).replace(/\/+$/, "");
 
 function Register() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [mobile, setMobile] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match")
-      return
+      alert("Passwords do not match");
+      return;
     }
 
-    setLoading(true)
-
-    const user = {
-      fullName: name,
-      email,
-      mobile,
-      password
-    }
+    setLoading(true);
 
     try {
-      const response = await fetch(
-        "https://smartbill-backend-b4wb.onrender.com/api/users/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(user)
-        }
-      )
+      const response = await fetch(`${API_URL}/api/users/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fullName: name.trim(),
+          email: email.trim(),
+          mobile: mobile.trim(),
+          password
+        })
+      });
 
-      const result = await response.text()
+      const result = await response.text();
 
-      if (response.ok) {
-        alert("Account created successfully!")
-        navigate("/login")
-      } else {
-        alert(result)
+      if (!response.ok) {
+        alert(result || `Registration failed (${response.status})`);
+        return;
       }
+
+      alert("Account created successfully!");
+      navigate("/login");
     } catch (error) {
-      alert("Backend connection failed")
-      console.error(error)
+      console.error("Registration error:", error);
+      alert(
+        "Cannot connect to the backend. Please check the backend status and CORS settings."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="auth-page">
@@ -75,7 +78,6 @@ function Register() {
         </div>
 
         <h1>Create Account</h1>
-
         <p className="auth-subtitle">
           Join SmartBill and manage your electricity smarter
         </p>
@@ -83,10 +85,8 @@ function Register() {
         <form onSubmit={handleSubmit}>
           <div className="auth-field">
             <label>Full Name</label>
-
             <div className="auth-input">
               <span>◉</span>
-
               <input
                 type="text"
                 placeholder="Enter your full name"
@@ -99,10 +99,8 @@ function Register() {
 
           <div className="auth-field">
             <label>Email</label>
-
             <div className="auth-input">
               <span>✉</span>
-
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -115,10 +113,8 @@ function Register() {
 
           <div className="auth-field">
             <label>Mobile Number</label>
-
             <div className="auth-input">
               <span>◉</span>
-
               <input
                 type="tel"
                 placeholder="Enter your mobile number"
@@ -131,10 +127,8 @@ function Register() {
 
           <div className="auth-field">
             <label>Password</label>
-
             <div className="auth-input">
               <span>⌁</span>
-
               <input
                 type="password"
                 placeholder="Create a password"
@@ -147,10 +141,8 @@ function Register() {
 
           <div className="auth-field">
             <label>Confirm Password</label>
-
             <div className="auth-input">
               <span>⌁</span>
-
               <input
                 type="password"
                 placeholder="Confirm your password"
@@ -178,8 +170,7 @@ function Register() {
         </div>
 
         <p className="auth-footer">
-          Already have an account?{" "}
-          <Link to="/login">Login</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
 
         <div className="auth-security">
@@ -188,7 +179,7 @@ function Register() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Register
+export default Register;
